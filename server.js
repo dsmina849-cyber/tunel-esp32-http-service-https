@@ -9,7 +9,7 @@ const wss = new WebSocketServer({ server });
 let esp32Socket = null;
 
 wss.on('connection', (ws) => {
-    console.log('ESP32-S3 conectado al túnel!');
+    console.log('Conectado');
     esp32Socket = ws;
 
     // Mantener la conexión activa enviando PING cada 20 segundos
@@ -20,7 +20,7 @@ wss.on('connection', (ws) => {
     }, 20000);
 
     ws.on('close', () => {
-        console.log('ESP32-S3 desconectado');
+        console.log('Servidor desconectado');
         clearInterval(interval);
         esp32Socket = null;
     });
@@ -32,14 +32,14 @@ wss.on('connection', (ws) => {
 
 app.get('*', (req, res) => {
     if (!esp32Socket || esp32Socket.readyState !== 1) {
-        return res.status(503).send('El ESP32-S3 no está conectado al túnel en este momento.');
+        return res.status(503).send('El servidor no esta disponible por el momento. -Danny');
     }
     
     esp32Socket.send('GET_DATA');
     
     const timeout = setTimeout(() => {
         if (!res.headersSent) {
-            res.status(504).send('Tiempo de espera agotado respondiendo desde el ESP32.');
+            res.status(504).send('Tiempo de espera agotado');
         }
     }, 10000);
 
